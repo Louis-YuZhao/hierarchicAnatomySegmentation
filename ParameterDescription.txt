@@ -1,0 +1,54 @@
+% in function global2Local
+
+radLexID = '58'......
+prevRegType = 'globAff'
+VISCERALsetup.currentDir = outDir/temp/'58'
+VISCERALsetup.globalTemp = outDir/temp/globalTemp/
+
+VISCERALsetup.batchID = 'LiverTest';
+VISCERALsetup.organs = {'58' '1302' '1326' '237' '29662' '1247' '480' '2473' '7578' '29663' '86' '30325' '40358' '32249' '29193'};
+VISCERALsetup.modality =  'CTce_ThAb'/ 'CT_wb';
+VISCERALsetup.imgID = "10000015_1_CT_wb"
+
+VISCERALsetup.outDir = outputDir/batchID;
+VISCERALsetup.tempDir = outDir/temp; 
+
+VISCERALsetup.scaled = 1;
+VISCERALsetup.scalingFactor = 0.5;
+
+VISCERALsetup.trainAtlasDir = VISCERALdir/dS_Anat2_Volumes/;
+VISCERALsetup.trainSegmentsDir = 'VISCERALdir/dS_Anat2_Segmentations/'
+
+VISCERALsetup.noAtlases = 20;
+
+VISCERALsetup.trainAtlases = atlases;
+% atlases.IDs = {10000110, ....}
+% atlases.paths =  {'VISCERALdir/dS_Anat2_Volumes/10000110_1_CTce_ThAb.nii.gz', ......}
+
+VISCERALsetup.ref_VISCERALnii = refNii;
+
+VISCERALsetup.p_globAff = [regParameters/ 'p_' modality '_globAff.txt'];
+VISCERALsetup.p_locAff = [regParameters/ 'p_' modality '_locAff.txt'];
+VISCERALsetup.p_bSp = [regParameters/ 'p_' modality '_bSp.txt'];
+
+VISCERALsetup.bSp = bSpline = 1; % Use 1 for adding B-spline registrations
+VISCERALsetup.bSp_thr = bSp_thr = 3;% Minimum number of atlases included in the b-spline mask
+VISCERALsetup.bSp_atlases = bSp_a = 4;% Number of atlases selected for b-spline registration
+VISCERALsetup.final_thr = 1;
+
+VISCERALsetup.largeROI = largeROI = 15; % voxels in kernel for dilating small ROI mask;
+VISCERALsetup.smallROI = smallROI = 25; % voxels in kernel for dilating large ROI masks;
+
+% Downsample original  volume 
+VISCERALsetup.scaledImg = outDir/temp/dS_10000015_1_CT_wb.nii;
+VISCERALsetup.origSize = downloaded size;
+
+% Global registration of whole body
+VISCERALsetup.globalTemp = outDir/temp/globalTemp/
+
+% Segment all organs in list
+organInfo.initialization = 'global'/'local';
+organInfo.name = 'rKidney';
+organInfo.prevRadLex = {'58'}/;
+
+
