@@ -1,8 +1,8 @@
-function multiOrganSegmentation(batchID, fileList, VISCERALdir, outputDir,  fov, organs, nAtlases)
+function multiOrganSegmentation(batchID, testList, trainingDir, outputDir,  volumeFormat, organs, nAtlases)
 %  batchID = 'LiverTest'
-%  fileList = ['/Users/medgift/Dropbox/anatomySegmentation/testDICOMs.txt'] (Test data)
-%  VISCERALdir = VISCERALdir (Training data)
-%  fov = 'tr' (fomat of the volume)
+%  testList = ['/Users/medgift/Dropbox/anatomySegmentation/testDICOMs.txt'] (Test data)
+%  trainingDir = trainingDir (Training data)
+%  volumeFormat = 'tr' (format of the volume)
 %  organs = {'all'}
 %  nAtlases = 20
 
@@ -13,41 +13,51 @@ addpath(genpath(routeThisFile))
 % Set empty output folder
 outDir = [outputDir '/' batchID];
 
-if exist(outDir, 'dir')
-    rmdir(outDir,'s');
-end;
-mkdir(outDir);
+% if exist(outDir, 'dir')
+%     rmdir(outDir,'s');
+% end;
 
+if ~exist(outDir, 'dir')
+    mkdir(outDir);
+end
 %% Setup paths and registration parameters
-[VISCERALsetup] = setVISCERALregsParams(batchID,VISCERALdir, fov, organs, outDir, nAtlases);
+[VISCERALsetup] = setVISCERALregsParams(batchID, trainingDir, volumeFormat, organs, outDir, nAtlases);
 % return regsInfo
 
 % Open DICOM folders list
-fid = fopen(fileList); % fileList = '/Users/medgift/Dropbox/anatomySegmentation/testDICOMs.txt'
-fline = fgetl(fid); % read one line of the file
+fid = fopen(testList); % testList = '/Users/medgift/Dropbox/anatomySegmentation/testDICOMs.txt'
+currentTestLine = fgetl(fid); % read one line of the file
 
-while fline>0,
+while currentTestLine>0,
     tic
     %% Convert dicom folder to single nifti file
-    [fidx] = strfind(fline, '/'); % Find one string within another
-    dicomID = fline(fidx(end)+1:end);  % dicomID = "10000015_1_CT_wb.nii.gz" ....
-    VISCERALsetup.imgID = dicomID; % Add target image ID  
+    [fidx] = strfind(currentTestLine, '/'); % Find one string within another
+    dicomID = currentTestLine(fidx(end)+1:end);  % dicomID = "Imdownsample_CutResult_sizeAdjust_10000005_1_CT_wb.nrrd" ....
+    prefix = 'Imdownsample_CutResult_sizeAdjust_';
+    VISCERALsetup.imgID = dicomID(1+length(prefix):8+length(prefix)); % Add target image ID  
 
     if ~exist([outDir '/' dicomID '.nrrd'],'file'),
-        disp('Converting DICOM folder to single NIFTI volume...');
-        [dcmNii, dcmNii_path] = my_dcm2nii(fline,dicomID,VISCERALsetup.ref_VISCERALnii,outDir);
-        clear dcmNii;
+%         dcmNii_path =  [outDir '/' dicomID '.nii'];
+%         disp('Converting DICOM folder to single NIFTI volume...');
+%         [dcmNii, dcmNii_path] = my_dcm2nii(currentTestLine,dicomID,VISCERALsetup.ref_VISCERALnii,outDir);
+%         clear dcmNii;
         
-        %% Downsample original target volume %%%%% 
-        disp('Downsample NIFTI volume...');
-        [target_dS, target_dS_path,origSize] = myRescale(dcmNii_path,VISCERALsetup.scalingFactor,VISCERALsetup.tempDir);
-        VISCERALsetup.scaledImg = target_dS_path;
-        VISCERALsetup.origSize = origSize;
-        clear target_dS;
-  
+        %% Downsample original target volume %%
+%         disp('Downsample NIFTI volume...');
+%         [target_dS, target_dS_path, origSize] = myRescale(dcmNii_path, VISCERALsetup.scalingFactor, VISCERALsetup.tempDir);
+%         VISCERALsetup.scaledImg = target_dS_path;
+%         VISCERALsetup.origSize = origSize;
+%         clear target_dS;  
+%         VISCERALsetup.scaledImg = currentTestLine;   
+        VISCERALsetup.targetImg = currentTestLine;  
+        
         %% Global registration of whole body
         disp('Input ready. Starting global alignment...')
-        VISCERALsetup.globalTemp = [VISCERALsetup.tempDir '/globalTemp/']; system(['mkdir ' VISCERALsetup.globalTemp]);
+        VISCERALsetup.globalTemp = [VISCERALsetup.tempDir '/globalTemp/']; 
+        if ~exist(VISCERALsetup.globalTemp,'file')
+            system(['mkdir ' VISCERALsetup.globalTemp]);
+        end
+        
         globalRegister(VISCERALsetup);
         
         %% Organs segmentation
@@ -67,11 +77,11 @@ while fline>0,
         end;
         
         %% Clean up temporary files
-        system(['rm -r ' outDir '/temp/']);
+        % system(['rm -r ' outDir '/temp/']);
         
-        fline = fgetl(fid);
+        currentTestLine = fgetl(fid);
     else
-        fline = fgetl(fid);
+        currentTestLine = fgetl(fid);
     end;
     toc
 end;

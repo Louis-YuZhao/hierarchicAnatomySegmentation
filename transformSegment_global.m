@@ -1,4 +1,4 @@
-function [] = transformSegment_global(VISCERALsetup,inDir,radlexID,prevRegType,currentRegType,useOriginal)
+function [] = transformSegment_global(VISCERALsetup, inDir, organID, prevRegType, currentRegType, useOriginal)
 % inDir = VISCERALsetup.globalTemp = outDir/temp/globalTemp/
 % radLexID = '58' ......
 % prevRegType = 'globAff'
@@ -6,7 +6,7 @@ function [] = transformSegment_global(VISCERALsetup,inDir,radlexID,prevRegType,c
 % useOriginal =1 
 
 % useOriginal =1 :
-% input = [VISCERALdir/dS_Anat2_Segmentations/* 10000015_1_CT_wb *_'58'_*
+% input = [trainingDir/dS_Anat2_Segmentations/* 10000015_1_CT_wb *_'58'_*
 % mask(1).name](VISCERALsetup.trainSegmentsDir)
 % output = outDir/temp/'58'
 % transform parameters = outDir/temp/globalTemp/10000015_1_CT_wb.....
@@ -18,7 +18,7 @@ function [] = transformSegment_global(VISCERALsetup,inDir,radlexID,prevRegType,c
 % transform parameters = outDir/temp/globalTemp/10000015_1_CT_wb.....
 
 out = VISCERALsetup.currentDir;
-% VISCERALsetup.currentDir = outDir/temp/'58'
+% VISCERALsetup.currentDir = VISCERALsetup.tempDir/'58' = outDir/temp/'58'
 
 allTransforms = dir([inDir '*' currentRegType '_TransformParameters.0.txt']);
 % {outDir/temp/globalTemp/ * 'globAff' ('locAff')_TransformParameters.0.txt}
@@ -30,6 +30,7 @@ for t = 1:length(allTransforms),
     % numel : number of the array elements
     transfID = allTransforms(t).name(1:numel(VISCERALsetup.imgID));
     transf_p = [inDir allTransforms(t).name];
+    % [VISCERALsetup.globalTemp/* 'globAff' ('locAff')_TransformParameters.0.txt]
     
     % Change transform parameters to obtain a binary mask '(FinalBSplineInterpolationOrder 0)';
     if ~strcmp('bSp',currentRegType),
@@ -50,13 +51,13 @@ for t = 1:length(allTransforms),
     end;
     
     if useOriginal,
-        mask = dir([VISCERALsetup.trainSegmentsDir '*' transfID '*_' radlexID '_*']);
-        % mask = dir(['VISCERALdir/dS_Anat2_Segmentations/* transfID *_'58'_* ])
+        mask = dir([VISCERALsetup.trainSegmentsDir '*' transfID '*_' organID '_*']);
+        % mask = dir(['trainingDir/dS_Anat2_Segmentations/* transfID *_'58'_* ])
         if ~isempty(mask)
             in = [VISCERALsetup.trainSegmentsDir mask(1).name];
         end;
     else
-        mask = dir([VISCERALsetup.currentDir '*' transfID '*_' radlexID '_' prevRegType '_result.nii']);
+        mask = dir([VISCERALsetup.currentDir '*' transfID '*_' organID '_' prevRegType '_result.nii']);
          % mask = dir([outDir/temp/'58' *  transfID *_58_globAff_result.nii'])
         if ~isempty(mask)
             in = [VISCERALsetup.currentDir mask(1).name];
@@ -66,10 +67,10 @@ for t = 1:length(allTransforms),
     if ~isempty(mask)
     
         % Call Transformix for first affine
-        system(['transformix -out ' out ' -tp ' transf_p ' -in ' in]);
+        system(['/home/louis/Documents/Packages/elastix_v4.8/bin/transformix -out ' out ' -tp ' transf_p ' -in ' in]);
         
         % Identify result files
-        system(['mv ' out 'transformix.log ' out transfID '_' radlexID '_' currentRegType '_transformix.log']);
-        system(['mv ' out 'result.nii ' out transfID '_' radlexID '_' currentRegType '_result.nii']);
+        system(['mv ' out 'transformix.log ' out transfID '_' organID '_' currentRegType '_transformix.log']);
+        system(['mv ' out 'result.nii ' out transfID '_' organID '_' currentRegType '_result.nii']);
     end;
 end;

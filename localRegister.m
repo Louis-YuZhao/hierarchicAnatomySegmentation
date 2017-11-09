@@ -1,4 +1,8 @@
 function localRegister(VISCERALsetup, prevRadlex, currRadlex, prevRegType, currentRegType)
+% prevRadlex = 'globalTemp'
+% currRadlex = organID
+% prevRegType = 
+% currentRegType = 
 
 if VISCERALsetup.scaled,
     fixPath = VISCERALsetup.scaledImg;
@@ -7,13 +11,14 @@ else
     fixPath = VISCERALsetup.targetImg;
 end;
 
-prevDir = [VISCERALsetup.tempDir prevRadlex '/'];
-currentDir = [VISCERALsetup.tempDir currRadlex '/'];
+prevDir = [VISCERALsetup.tempDir '/' prevRadlex '/'];
+currentDir = [VISCERALsetup.tempDir '/' currRadlex '/'];
 allAtlases = dir([prevDir '*' prevRegType '_result.0.*']);
 
 maskFused = dir([currentDir currRadlex '_maskFused_' prevRegType '*']);
 if ~isempty(maskFused)
     fmaskPath = [currentDir maskFused(1).name]; 
+    % fmaskPath = [VISCERALsetup.tempDir currRadlex '/' currRadlex '_maskFused_' prevRegType '*'];
 end;
 
 out = currentDir;
@@ -24,9 +29,10 @@ for iterAtlas = 1:length(allAtlases),
     % Set path and load moving image
     movID = allAtlases(iterAtlas).name(1:numel(VISCERALsetup.imgID));
     movPath = [prevDir allAtlases(iterAtlas).name];
+    % movPath = [VISCERALsetup.tempDir prevRadlex '/'  '*' prevRegType '_result.0.*'];
     
     %  Call elastix for first affine
-    system(['elastix -f ' fixPath ' -m ' movPath ' -fMask ' fmaskPath ' -mMask ' fmaskPath ' -out ' out  ' -p ' p]);
+    system(['/home/louis/Documents/Packages/elastix_v4.8/bin/elastix -f ' fixPath ' -m ' movPath ' -fMask ' fmaskPath ' -mMask ' fmaskPath ' -out ' out  ' -p ' p]);
     
     % Identify result files
     system(['mv ' out 'elastix.log ' out movID '_' currRadlex '_' currentRegType '_elastix.log']);

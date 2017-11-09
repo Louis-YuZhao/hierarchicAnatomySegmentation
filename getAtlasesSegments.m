@@ -11,8 +11,8 @@ allAtlases = dir([trainAtlasDir '*' modality '*']);
 
 if numAtlases>length(allAtlases),
     disp('-- There are not enough atlases in the VISCERAL data set!!');
-    numAtlases = num2str(length(allAtlases));
-    disp(['-- Using max number of atlases: ' numAtlases]);
+    numAtlases = length(allAtlases);
+    disp(['-- Using max number of atlases: ' num2str(numAtlases)]);
 else
     randAtlasSelection = randperm(length(allAtlases),numAtlases);
 end;

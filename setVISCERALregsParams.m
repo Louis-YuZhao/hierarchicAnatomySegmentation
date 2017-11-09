@@ -18,7 +18,7 @@ else
 end;
 
 % Define organs to be segmented
-if strcmp(organs{:},'all')
+if strcmp(organs{1},'all')
     organs = {'58' '1302' '1326' '237' '29662' ...
         '187' '30324' '170' '40357' '32248' ...
         '1247' '480' '2473' '7578' '29663' ...
@@ -31,18 +31,18 @@ system(['mkdir ' tempDir]);
 
 % Downsampled volumes = speed up segmentation process
 % Volumes are downsampled to speed up segmentation
-downsampled = 1;
+downsampled = 0;
 scalingFactor = 0.5;
 
 if downsampled,
-    prefix = 'Imdownsample_CutResult_sizeAdjust_';
+    prefix = 'DS_';
 else
-    prefix = '';
+    prefix = 'Imdownsample_CutResult_sizeAdjust_';
 end;
 
 % Data set
-trainAtlasDir = [VISCERALdir prefix 'Anat2_' 'Volumes' '/'];
-trainSegmentsDir = [VISCERALdir prefix 'Anat2_' 'Segmentations' '/'];
+trainAtlasDir = [VISCERALdir  'ds_Anat_' 'Volumes' '/'];
+trainSegmentsDir = [VISCERALdir  'ds_Anat_' 'Segmentations' '/'];
 
 % Store paths and information from the atlases of the VISCERAL Anatomy data set
 [numAtlases,atlases,refNii] = getAtlasesSegments(modality,nAtlases,trainAtlasDir,trainSegmentsDir,prefix);
@@ -51,7 +51,8 @@ trainSegmentsDir = [VISCERALdir prefix 'Anat2_' 'Segmentations' '/'];
 % atlases.paths =  {'VISCERALdir/dS_Anat2_Volumes/10000110_1_CTce_ThAb.nii.gz', ......}
 
 % Registration parameter files paths
-paramDir = 'regParameters/';
+paramDir = ['/home/louis/Documents/program_work/MATLAB/2017_11_04_hierarchicAnatomySegmentation_v2/' ...
+                    'hierarchicAnatomySegmentation/code/regParameters/'];
 p_globAff = [paramDir 'p_' modality '_globAff.txt']; % Globak affine registration
 p_locAff = [paramDir 'p_' modality '_locAff.txt']; % Local affine registration
 p_bSp = [paramDir 'p_' modality '_bSp.txt']; % Local b-Spline registration

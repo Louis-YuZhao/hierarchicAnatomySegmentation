@@ -1,5 +1,8 @@
 % Rescales(downsample, upsample) a nifti volume without interpolation
-function [downSamp_Img,newFilename,origSize] = myRescale(filename,scalingFactor,outDir)
+function [downSamp_Img,newFilename,origSize] = myRescale(filename, scalingFactor, outDir)
+% filename 
+% scalingFactor = VISCERALsetup.scalingFactor
+% outDir = VISCERALsetup.tempDir
 
 if strcmp(filename(end-2:end),'.gz')
     filename = filename(1:end-3);

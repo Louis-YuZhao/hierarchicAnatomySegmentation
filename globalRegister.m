@@ -16,9 +16,10 @@ for a=1:length(VISCERALsetup.trainAtlases.paths)
     out = VISCERALsetup.globalTemp;
     p = VISCERALsetup.p_globAff;
     
-    %  Call elastix for first affine
-    system(['elastix -f ' fixPath ' -m ' movPath ' -out ' out  ' -p ' p]);
-    
+    %  Call elastix for first affine 
+    %  setenv('MATLAB_SHELL', '/bin/tcsh');    
+    system(['/home/louis/Documents/Packages/elastix_v4.8/bin/elastix -f ' fixPath ' -m ' movPath ' -out ' out  ' -p ' p]);
+   
     % Identify result files
     system(['mv ' out 'elastix.log ' out VISCERALsetup.trainAtlases.IDs{a} '_' regType '_elastix.log']);
     system(['mv ' out 'IterationInfo.0.R0.txt ' out VISCERALsetup.trainAtlases.IDs{a} '_' regType '_IterationInfo.0.R0.txt']);

@@ -87,8 +87,7 @@ if ~isempty(allTransforms)
             maskFused = maskFused_rescaled; clear maskFused_rescaled;
             
             maskFused = correctSize(maskFused,VISCERALsetup);
-        end;
-        
+        end;        
         targetMask_out = [VISCERALsetup.outDir '/' VISCERALsetup.imgID '_' VISCERALsetup.modality '_' radLexID '.nii'];
         %
     end;

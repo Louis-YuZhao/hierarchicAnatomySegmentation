@@ -1,4 +1,8 @@
-function [dcmNii,dcmNii_path] = my_dcm2nii(dicomFolder,dicomID,ref_VISCERALnii,out)
+function [dcmNii,dcmNii_path] = my_dcm2nii(dicomFolder, dicomID, ref_VISCERALnii, out)
+% dicomFolder = currentTestLine
+% dicomID = dicomID = "Imdownsample_CutResult_sizeAdjust_10000005_1_CT_wb.nrrd" ....
+% ref_VISCERALnii = 
+% out = outputDir/batchID
 
 % Get dicom ID
 outNii = [out '/' dicomID];
@@ -9,10 +13,10 @@ refNii = load_untouch_nii(ref_VISCERALnii);
 % Find all dicom slices
 files = dir(dicomFolder);
 dicomFileNames=[];
-for j=1:size(files,1),  
-    if ~files(j).isdir, % Skip dirs
-    %if regexpi(files(j).name, '.dcm'), % If files have .dcm in the name
-        dicomFileNames=[dicomFileNames; {files(j).name}]; 
+for i=1:size(files,1),  
+    if ~files(i).isdir, % Skip dirs
+    % if regexpi(files(i).name, '.dcm'), % If files have .dcm in the name
+        dicomFileNames=[dicomFileNames; {files(i).name}]; 
     end;
 end;
 % perform checks
@@ -28,6 +32,8 @@ image_nb=size(dicomFileNames,1);
 while count<=image_nb,
     for k=1:image_nb,
         dcmInfo=dicominfo([dicomFolder '/' dicomFileNames{k,:}]);
+        % Access the contents of cells--the numbers, text, or other data
+        % within the cells--by indexing with curly braces.
         
         if dcmInfo.InstanceNumber==count,
             sortedDicomFileNames=[sortedDicomFileNames; {dicomFileNames(k,:)}];

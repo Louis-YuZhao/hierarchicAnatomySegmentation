@@ -6,8 +6,8 @@ else
     fixPath = VISCERALsetup.targetImg;
 end;
 
-prevDir = [VISCERALsetup.tempDir prevRadlex '/'];
-currentDir = [VISCERALsetup.tempDir currRadlex '/'];
+prevDir = [VISCERALsetup.tempDir '/' prevRadlex '/'];
+currentDir = [VISCERALsetup.tempDir '/' currRadlex '/'];
 
 allAtlases = [];
 for a = 1:length(atlasesList)
@@ -31,7 +31,7 @@ for iterAtlas = 1:length(allAtlases),
     movPath = [prevDir allAtlases{iterAtlas}];
     
     %  Call elastix for first affine
-    system(['elastix -f ' fixPath ' -m ' movPath ' -fMask ' fmaskPath ' -mMask ' fmaskPath ' -out ' out  ' -p ' p]);
+    system(['/home/louis/Documents/Packages/elastix_v4.8/bin/elastix -f ' fixPath ' -m ' movPath ' -fMask ' fmaskPath ' -mMask ' fmaskPath ' -out ' out  ' -p ' p]);
     
     % Identify result files
     system(['mv ' out 'elastix.log ' out movID '_' currRadlex '_' currentRegType '_elastix.log']);

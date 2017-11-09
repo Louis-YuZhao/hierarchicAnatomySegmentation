@@ -1,9 +1,11 @@
+
+
 % Define if organ requires a global or local initialization,
 % add organ name to radLex and
 % add organs required for initialization (if required)
-function [organInfo] = getOrganInfo(radLexID)
+function [organInfo] = getOrganInfo(organID)
 
-switch radLexID
+switch organID
     %% Global initialization
     case '58'
         organInfo.initialization = 'global';
